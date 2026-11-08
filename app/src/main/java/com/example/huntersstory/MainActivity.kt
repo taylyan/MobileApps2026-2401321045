@@ -1,4 +1,4 @@
-package com.example.huntersstory
+package com.huntersstory.app
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

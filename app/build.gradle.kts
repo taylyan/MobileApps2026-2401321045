@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.huntersstory"
+    namespace = "com.huntersstory.app"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.huntersstory"
+        applicationId = "com.huntersstory.app"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

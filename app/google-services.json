@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349848552584",
+    "project_id": "huntersstory-50181",
+    "storage_bucket": "huntersstory-50181.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349848552584:android:fdb550c83292d2fae24b3d",
+        "android_client_info": {
+          "package_name": "com.huntersstory.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx7l4gzFrPfNGKySIEAn9XgwP3hph_0o0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

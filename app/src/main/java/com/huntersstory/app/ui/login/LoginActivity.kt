@@ -14,6 +14,8 @@ import com.huntersstory.app.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 import android.content.Intent
 import com.huntersstory.app.ui.register.RegisterActivity
+import com.huntersstory.app.MainActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
@@ -55,12 +57,12 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     AuthUiState.Success -> {
-                        loginButton.isEnabled = true
-                        Toast.makeText(
+                        val intent = Intent(
                             this@LoginActivity,
-                            "Login successful!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            MainActivity::class.java
+                        )
+                        startActivity(intent)
+                        finish()
                     }
 
                     is AuthUiState.Error -> {
@@ -75,4 +77,15 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
 }

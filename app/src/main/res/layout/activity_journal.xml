@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#F4F6F3">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hunting Journal"
+        android:textColor="#234D32"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Keep track of your hunting adventures"
+        android:textColor="#666666"
+        android:textSize="15sp"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnAddHunt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Hunting Trip" />
+
+    <TextView
+        android:id="@+id/tvEmptyJournal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No hunting trips yet. Add your first one!"
+        android:textColor="#666666"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginTop="40dp" />
+
+</LinearLayout>

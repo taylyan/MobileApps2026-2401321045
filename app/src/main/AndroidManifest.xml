@@ -15,6 +15,13 @@
         android:theme="@style/Theme.HuntersStory">
 
         <activity
+            android:name=".ui.journal.AddHuntActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.journal.JournalActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.register.RegisterActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

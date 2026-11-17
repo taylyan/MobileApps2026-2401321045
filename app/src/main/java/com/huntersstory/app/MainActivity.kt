@@ -1,4 +1,3 @@
-
 package com.huntersstory.app
 
 import android.content.Intent
@@ -11,7 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.huntersstory.app.ui.login.LoginActivity
-
+import com.huntersstory.app.ui.journal.JournalActivity
 class MainActivity : AppCompatActivity() {
 
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -51,6 +50,14 @@ class MainActivity : AppCompatActivity() {
             auth.signOut()
             openLogin()
         }
+
+        val journalButton = findViewById<Button>(R.id.btnJournal)
+
+        journalButton.setOnClickListener {
+            val intent = Intent(this, JournalActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun openLogin() {

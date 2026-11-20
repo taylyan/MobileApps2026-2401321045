@@ -56,5 +56,6 @@ dependencies {
     ksp("androidx.room:room-compiler:2.8.4")
 
     implementation("androidx.recyclerview:recyclerview:1.4.0")
-
+    implementation("org.maplibre.gl:android-sdk:13.6.1")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 }

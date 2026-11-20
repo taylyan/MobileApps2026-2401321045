@@ -11,6 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.huntersstory.app.ui.login.LoginActivity
 import com.huntersstory.app.ui.journal.JournalActivity
+import com.huntersstory.app.ui.spots.SpotsActivity
+
 class MainActivity : AppCompatActivity() {
 
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -58,6 +60,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val spotsButton = findViewById<Button>(R.id.btnSpots)
+
+        spotsButton.setOnClickListener {
+            startActivity(
+                Intent(this, SpotsActivity::class.java)
+            )
+        }
     }
 
     private fun openLogin() {

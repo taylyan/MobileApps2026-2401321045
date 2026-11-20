@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.huntersstory.app.ui.login.LoginActivity
 import com.huntersstory.app.ui.journal.JournalActivity
 import com.huntersstory.app.ui.spots.SpotsActivity
+import com.huntersstory.app.ui.collection.CollectionActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,6 +68,33 @@ class MainActivity : AppCompatActivity() {
                 Intent(this, SpotsActivity::class.java)
             )
         }
+
+        val equipmentButton =
+            findViewById<Button>(R.id.btnEquipment)
+
+        equipmentButton.setOnClickListener {
+            val intent = Intent(
+                this,
+                CollectionActivity::class.java
+            )
+
+            intent.putExtra("collection_type", "equipment")
+            startActivity(intent)
+        }
+
+        val dogsButton =
+            findViewById<Button>(R.id.btnDogs)
+
+        dogsButton.setOnClickListener {
+            val intent = Intent(
+                this,
+                CollectionActivity::class.java
+            )
+
+            intent.putExtra("collection_type", "dogs")
+            startActivity(intent)
+        }
+
     }
 
     private fun openLogin() {

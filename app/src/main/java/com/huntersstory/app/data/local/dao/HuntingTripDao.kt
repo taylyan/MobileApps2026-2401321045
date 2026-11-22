@@ -37,4 +37,7 @@ interface HuntingTripDao {
         tripId: Long,
         userId: String
     ): HuntingTrip?
+
+    @Query("DELETE FROM hunting_trips WHERE userId = :uid")
+    suspend fun deleteAllForUser(uid: String)
 }

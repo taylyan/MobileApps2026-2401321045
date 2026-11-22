@@ -32,4 +32,7 @@ interface HuntingDogDao {
 
     @Query("DELETE FROM hunting_dogs WHERE id = :id AND userId = :uid")
     suspend fun delete(id: Long, uid: String): Int
+    @Query("DELETE FROM hunting_dogs WHERE userId = :uid")
+    suspend fun deleteAllForUser(uid: String)
+
 }

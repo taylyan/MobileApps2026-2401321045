@@ -30,4 +30,8 @@ interface EquipmentDao {
 
     @Query("DELETE FROM equipment WHERE id = :id AND userId = :uid")
     suspend fun delete(id: Long, uid: String): Int
+
+    @Query("DELETE FROM equipment WHERE userId = :uid")
+    suspend fun deleteAllForUser(uid: String)
+
 }

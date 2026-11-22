@@ -22,4 +22,8 @@ interface HuntingSpotDao {
         "DELETE FROM hunting_spots WHERE id = :id AND userId = :userId"
     )
     suspend fun deleteById(id: Long, userId: String): Int
+
+    @Query("DELETE FROM hunting_spots WHERE userId = :uid")
+    suspend fun deleteAllForUser(uid: String)
+
 }

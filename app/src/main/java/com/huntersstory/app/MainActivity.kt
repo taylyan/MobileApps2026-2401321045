@@ -14,6 +14,9 @@ import com.huntersstory.app.ui.journal.JournalActivity
 import com.huntersstory.app.ui.spots.SpotsActivity
 import com.huntersstory.app.ui.collection.CollectionActivity
 import com.huntersstory.app.ui.gallery.GalleryActivity
+import com.huntersstory.app.ui.sync.CloudSyncActivity
+
+
 class MainActivity : AppCompatActivity() {
 
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -100,6 +103,14 @@ class MainActivity : AppCompatActivity() {
         galleryButton.setOnClickListener {
             startActivity(
                 Intent(this, GalleryActivity::class.java)
+            )
+        }
+
+        val cloudButton = findViewById<Button>(R.id.btnCloudSync)
+
+        cloudButton.setOnClickListener {
+            startActivity(
+                Intent(this, CloudSyncActivity::class.java)
             )
         }
 

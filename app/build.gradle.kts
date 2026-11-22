@@ -3,7 +3,8 @@ plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
-
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
+    id("dev.detekt") version "2.0.0-alpha.6"
 }
 
 android {
@@ -76,4 +77,13 @@ dependencies {
     testImplementation("androidx.test:core:1.7.0")
 }
 
-
+ktlint {
+    android.set(true)
+    verbose.set(true)
+    outputToConsole.set(true)
+    ignoreFailures.set(false)
+}
+detekt {
+    toolVersion = "2.0.0-alpha.6"
+    ignoreFailures = false
+}

@@ -3,35 +3,33 @@ package com.huntersstory.app.data.repository
 
 import android.content.Context
 import com.huntersstory.app.data.local.HunterDatabase
+import com.huntersstory.app.data.local.dao.HuntingPhotoDao
 import com.huntersstory.app.data.local.entity.HuntingPhoto
 import kotlinx.coroutines.flow.Flow
 import java.io.File
-import com.huntersstory.app.data.local.dao.HuntingPhotoDao
+
 class PhotoRepository(
     context: Context,
     private val dao: HuntingPhotoDao =
-        HunterDatabase.getDatabase(
-            context.applicationContext
-        ).huntingPhotoDao()
+        HunterDatabase
+            .getDatabase(
+                context.applicationContext,
+            ).huntingPhotoDao(),
 ) {
-
     private val appContext = context.applicationContext
 
     val photoDirectory: File
-        get() = File(appContext.filesDir, "photos")
-            .apply { mkdirs() }
+        get() =
+            File(appContext.filesDir, "photos")
+                .apply { mkdirs() }
 
-    fun observe(uid: String): Flow<List<HuntingPhoto>> {
-        return dao.getByUser(uid)
-    }
+    fun observe(uid: String): Flow<List<HuntingPhoto>> = dao.getByUser(uid)
 
-    fun getFile(photo: HuntingPhoto): File {
-        return File(photoDirectory, photo.fileName)
-    }
+    fun getFile(photo: HuntingPhoto): File = File(photoDirectory, photo.fileName)
 
     suspend fun save(
         uid: String,
-        fileName: String
+        fileName: String,
     ) {
         val file = File(photoDirectory, fileName)
 
@@ -43,14 +41,14 @@ class PhotoRepository(
             HuntingPhoto(
                 userId = uid,
                 fileName = fileName,
-                createdAt = System.currentTimeMillis()
-            )
+                createdAt = System.currentTimeMillis(),
+            ),
         )
     }
 
     suspend fun delete(
         photo: HuntingPhoto,
-        uid: String
+        uid: String,
     ) {
         val deleted = dao.deleteById(photo.id, uid)
 
@@ -63,7 +61,7 @@ class PhotoRepository(
             // Database record is removed; file cleanup can be retried.
             android.util.Log.w(
                 "PhotoRepository",
-                "Could not delete photo file: ${file.name}"
+                "Could not delete photo file: ${file.name}",
             )
         }
     }

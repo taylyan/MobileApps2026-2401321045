@@ -6,15 +6,14 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class HuntingDogValidatorTest {
-
     @Test
     fun validDogReturnsNull() {
         assertNull(
             HuntingDogValidator.validate(
                 "Rex",
                 "German Shorthaired Pointer",
-                3
-            )
+                3,
+            ),
         )
     }
 
@@ -25,8 +24,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "",
                 "Pointer",
-                3
-            )
+                3,
+            ),
         )
     }
 
@@ -37,8 +36,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "   ",
                 "Pointer",
-                3
-            )
+                3,
+            ),
         )
     }
 
@@ -49,8 +48,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Rex",
                 "",
-                3
-            )
+                3,
+            ),
         )
     }
 
@@ -61,8 +60,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Rex",
                 "Pointer",
-                null
-            )
+                null,
+            ),
         )
     }
 
@@ -73,8 +72,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Rex",
                 "Pointer",
-                -1
-            )
+                -1,
+            ),
         )
     }
 
@@ -85,8 +84,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Rex",
                 "Pointer",
-                31
-            )
+                31,
+            ),
         )
     }
 
@@ -96,8 +95,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Max",
                 "Weimaraner",
-                0
-            )
+                0,
+            ),
         )
     }
 
@@ -107,8 +106,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Rex",
                 "Pointer",
-                30
-            )
+                30,
+            ),
         )
     }
 
@@ -118,8 +117,8 @@ class HuntingDogValidatorTest {
             HuntingDogValidator.validate(
                 "Lucky",
                 "English Setter",
-                5
-            )
+                5,
+            ),
         )
     }
 }

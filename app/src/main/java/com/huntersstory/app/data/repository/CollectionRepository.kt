@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 
 enum class CollectionType {
     EQUIPMENT,
-    DOGS
+    DOGS,
 }
 
 data class CollectionItem(
@@ -17,20 +17,17 @@ data class CollectionItem(
     val name: String,
     val secondary: String,
     val notes: String = "",
-    val ageYears: Int? = null
+    val ageYears: Int? = null,
 )
 
 class CollectionRepository(
-    private val db: HunterDatabase
+    private val db: HunterDatabase,
 ) {
-
     fun observe(
         type: CollectionType,
-        uid: String
-    ): Flow<List<CollectionItem>> {
-
-        return when (type) {
-
+        uid: String,
+    ): Flow<List<CollectionItem>> =
+        when (type) {
             CollectionType.EQUIPMENT -> {
                 db.equipmentDao().getByUser(uid).map { items ->
                     items.map { item ->
@@ -38,7 +35,7 @@ class CollectionRepository(
                             id = item.id,
                             name = item.name,
                             secondary = item.category,
-                            notes = item.notes
+                            notes = item.notes,
                         )
                     }
                 }
@@ -52,21 +49,19 @@ class CollectionRepository(
                             name = dog.name,
                             secondary = dog.breed,
                             notes = dog.notes,
-                            ageYears = dog.ageYears
+                            ageYears = dog.ageYears,
                         )
                     }
                 }
             }
         }
-    }
 
     suspend fun save(
         type: CollectionType,
         uid: String,
-        item: CollectionItem
+        item: CollectionItem,
     ) {
         when (type) {
-
             CollectionType.EQUIPMENT -> {
                 if (item.id == 0L) {
                     db.equipmentDao().insert(
@@ -74,17 +69,18 @@ class CollectionRepository(
                             userId = uid,
                             name = item.name,
                             category = item.secondary,
-                            notes = item.notes
-                        )
+                            notes = item.notes,
+                        ),
                     )
                 } else {
-                    val changed = db.equipmentDao().update(
-                        item.id,
-                        uid,
-                        item.name,
-                        item.secondary,
-                        item.notes
-                    )
+                    val changed =
+                        db.equipmentDao().update(
+                            item.id,
+                            uid,
+                            item.name,
+                            item.secondary,
+                            item.notes,
+                        )
                     check(changed > 0) { "Equipment not found." }
                 }
             }
@@ -99,18 +95,19 @@ class CollectionRepository(
                             name = item.name,
                             breed = item.secondary,
                             ageYears = age,
-                            notes = item.notes
-                        )
+                            notes = item.notes,
+                        ),
                     )
                 } else {
-                    val changed = db.huntingDogDao().update(
-                        item.id,
-                        uid,
-                        item.name,
-                        item.secondary,
-                        age,
-                        item.notes
-                    )
+                    val changed =
+                        db.huntingDogDao().update(
+                            item.id,
+                            uid,
+                            item.name,
+                            item.secondary,
+                            age,
+                            item.notes,
+                        )
                     check(changed > 0) { "Dog not found." }
                 }
             }
@@ -120,14 +117,15 @@ class CollectionRepository(
     suspend fun delete(
         type: CollectionType,
         uid: String,
-        id: Long
+        id: Long,
     ) {
-        val deleted = when (type) {
-            CollectionType.EQUIPMENT ->
-                db.equipmentDao().delete(id, uid)
-            CollectionType.DOGS ->
-                db.huntingDogDao().delete(id, uid)
-        }
+        val deleted =
+            when (type) {
+                CollectionType.EQUIPMENT ->
+                    db.equipmentDao().delete(id, uid)
+                CollectionType.DOGS ->
+                    db.huntingDogDao().delete(id, uid)
+            }
 
         check(deleted > 0) { "Record not found." }
     }

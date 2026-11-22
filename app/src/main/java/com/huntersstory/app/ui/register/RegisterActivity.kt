@@ -16,7 +16,6 @@ import com.huntersstory.app.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
-
     private lateinit var viewModel: AuthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,21 +60,23 @@ class RegisterActivity : AppCompatActivity() {
                         }
 
                         AuthUiState.Success -> {
-                            Toast.makeText(
-                                this@RegisterActivity,
-                                "Account created successfully!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast
+                                .makeText(
+                                    this@RegisterActivity,
+                                    "Account created successfully!",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
                             finish()
                         }
 
                         is AuthUiState.Error -> {
                             registerButton.isEnabled = true
-                            Toast.makeText(
-                                this@RegisterActivity,
-                                state.message,
-                                Toast.LENGTH_LONG
-                            ).show()
+                            Toast
+                                .makeText(
+                                    this@RegisterActivity,
+                                    state.message,
+                                    Toast.LENGTH_LONG,
+                                ).show()
                         }
                     }
                 }

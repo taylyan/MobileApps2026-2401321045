@@ -11,5 +11,5 @@ data class Equipment(
     val userId: String,
     val name: String,
     val category: String,
-    val notes: String = ""
+    val notes: String = "",
 )

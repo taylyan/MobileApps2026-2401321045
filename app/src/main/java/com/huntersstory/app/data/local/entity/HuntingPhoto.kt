@@ -10,5 +10,5 @@ data class HuntingPhoto(
     val id: Long = 0,
     val userId: String,
     val fileName: String,
-    val createdAt: Long
+    val createdAt: Long,
 )

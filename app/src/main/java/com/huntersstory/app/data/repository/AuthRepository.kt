@@ -6,31 +6,35 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
 
 class AuthRepository(
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
 ) {
     val currentUser: FirebaseUser?
         get() = auth.currentUser
 
     suspend fun register(
         email: String,
-        password: String
+        password: String,
     ): FirebaseUser? {
-        val result = auth.createUserWithEmailAndPassword(
-            email.trim(),
-            password
-        ).await()
+        val result =
+            auth
+                .createUserWithEmailAndPassword(
+                    email.trim(),
+                    password,
+                ).await()
 
         return result.user
     }
 
     suspend fun login(
         email: String,
-        password: String
+        password: String,
     ): FirebaseUser? {
-        val result = auth.signInWithEmailAndPassword(
-            email.trim(),
-            password
-        ).await()
+        val result =
+            auth
+                .signInWithEmailAndPassword(
+                    email.trim(),
+                    password,
+                ).await()
 
         return result.user
     }

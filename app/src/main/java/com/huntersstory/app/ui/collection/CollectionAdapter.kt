@@ -15,14 +15,13 @@ import com.huntersstory.app.data.repository.CollectionType
 class CollectionAdapter(
     private val type: CollectionType,
     private val onEdit: (CollectionItem) -> Unit,
-    private val onDelete: (CollectionItem) -> Unit
+    private val onDelete: (CollectionItem) -> Unit,
 ) : ListAdapter<CollectionItem, CollectionAdapter.ItemHolder>(
-    ItemDiff()
-) {
-
-    class ItemHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+        ItemDiff(),
+    ) {
+    class ItemHolder(
+        view: View,
+    ) : RecyclerView.ViewHolder(view) {
         val title: TextView =
             view.findViewById(R.id.tvItemTitle)
 
@@ -41,29 +40,32 @@ class CollectionAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ItemHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_collection, parent, false)
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_collection, parent, false)
 
         return ItemHolder(view)
     }
 
     override fun onBindViewHolder(
         holder: ItemHolder,
-        position: Int
+        position: Int,
     ) {
         val item = getItem(position)
 
         holder.title.text = item.name
 
-        holder.subtitle.text = when (type) {
-            CollectionType.EQUIPMENT ->
-                "Category: ${item.secondary}"
+        holder.subtitle.text =
+            when (type) {
+                CollectionType.EQUIPMENT ->
+                    "Category: ${item.secondary}"
 
-            CollectionType.DOGS ->
-                "Breed: ${item.secondary} | Age: ${item.ageYears} years"
-        }
+                CollectionType.DOGS ->
+                    "Breed: ${item.secondary} | Age: ${item.ageYears} years"
+            }
 
         holder.notes.text = item.notes
         holder.notes.visibility =
@@ -79,15 +81,14 @@ class CollectionAdapter(
     }
 
     class ItemDiff : DiffUtil.ItemCallback<CollectionItem>() {
-
         override fun areItemsTheSame(
             oldItem: CollectionItem,
-            newItem: CollectionItem
+            newItem: CollectionItem,
         ): Boolean = oldItem.id == newItem.id
 
         override fun areContentsTheSame(
             oldItem: CollectionItem,
-            newItem: CollectionItem
+            newItem: CollectionItem,
         ): Boolean = oldItem == newItem
     }
 }

@@ -20,13 +20,17 @@ import com.huntersstory.app.ui.journal.viewmodel.HuntingTripViewModel
 import kotlinx.coroutines.launch
 
 class JournalActivity : AppCompatActivity() {
-
     private lateinit var viewModel: HuntingTripViewModel
     private lateinit var adapter: HuntingTripAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_journal)
+
+        findViewById<Button>(R.id.btnBack)
+            .setOnClickListener {
+                finish()
+            }
 
         viewModel =
             ViewModelProvider(this)[HuntingTripViewModel::class.java]
@@ -37,25 +41,25 @@ class JournalActivity : AppCompatActivity() {
         val emptyMessage =
             findViewById<TextView>(R.id.tvEmptyJournal)
 
-        adapter = HuntingTripAdapter(
-            onDeleteClick = { trip ->
-                AlertDialog.Builder(this)
-                    .setTitle("Delete Hunting Trip")
-                    .setMessage(
-                        "Are you sure you want to delete this hunting trip?"
-                    )
-                    .setPositiveButton("Delete") { _, _ ->
-                        viewModel.deleteTrip(trip)
-                    }
-                    .setNegativeButton("Cancel", null)
-                    .show()
-            },
-            onEditClick = { trip ->
-                val intent = Intent(this, AddHuntActivity::class.java)
-                intent.putExtra("trip_id", trip.id)
-                startActivity(intent)
-            }
-        )
+        adapter =
+            HuntingTripAdapter(
+                onDeleteClick = { trip ->
+                    AlertDialog
+                        .Builder(this)
+                        .setTitle("Delete Hunting Trip")
+                        .setMessage(
+                            "Are you sure you want to delete this hunting trip?",
+                        ).setPositiveButton("Delete") { _, _ ->
+                            viewModel.deleteTrip(trip)
+                        }.setNegativeButton("Cancel", null)
+                        .show()
+                },
+                onEditClick = { trip ->
+                    val intent = Intent(this, AddHuntActivity::class.java)
+                    intent.putExtra("trip_id", trip.id)
+                    startActivity(intent)
+                },
+            )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -67,9 +71,12 @@ class JournalActivity : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         if (userId == null) {
-            Toast.makeText(
-                this, "Please log in again.", Toast.LENGTH_SHORT
-            ).show()
+            Toast
+                .makeText(
+                    this,
+                    "Please log in again.",
+                    Toast.LENGTH_SHORT,
+                ).show()
             finish()
             return
         }

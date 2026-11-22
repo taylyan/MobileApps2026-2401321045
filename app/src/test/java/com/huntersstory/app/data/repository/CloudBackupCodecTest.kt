@@ -6,81 +6,91 @@ import com.huntersstory.app.data.local.entity.HuntingDog
 import com.huntersstory.app.data.local.entity.HuntingSpot
 import com.huntersstory.app.data.local.entity.HuntingTrip
 import org.json.JSONObject
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CloudBackupCodecTest {
-
     private val uid = "test-user-123"
 
-    private fun sampleData() = BackupData(
-        trips = listOf(
-            HuntingTrip(
-                id = 5,
-                userId = uid,
-                date = "2026-11-22",
-                location = "Kuklen",
-                gameSpecies = "Pheasant",
-                notes = "Morning trip"
-            )
-        ),
-        spots = listOf(
-            HuntingSpot(
-                id = 8,
-                userId = uid,
-                name = "Forest spot",
-                latitude = 42.035,
-                longitude = 24.786,
-                notes = "Near the trees"
-            )
-        ),
-        equipment = listOf(
-            Equipment(
-                id = 3,
-                userId = uid,
-                name = "Binoculars",
-                category = "Optics",
-                notes = "10x42"
-            )
-        ),
-        dogs = listOf(
-            HuntingDog(
-                id = 7,
-                userId = uid,
-                name = "Rex",
-                breed = "Pointer",
-                ageYears = 3,
-                notes = "Trained"
-            )
+    private fun sampleData() =
+        BackupData(
+            trips =
+                listOf(
+                    HuntingTrip(
+                        id = 5,
+                        userId = uid,
+                        date = "2026-11-22",
+                        location = "Kuklen",
+                        gameSpecies = "Pheasant",
+                        notes = "Morning trip",
+                    ),
+                ),
+            spots =
+                listOf(
+                    HuntingSpot(
+                        id = 8,
+                        userId = uid,
+                        name = "Forest spot",
+                        latitude = 42.035,
+                        longitude = 24.786,
+                        notes = "Near the trees",
+                    ),
+                ),
+            equipment =
+                listOf(
+                    Equipment(
+                        id = 3,
+                        userId = uid,
+                        name = "Binoculars",
+                        category = "Optics",
+                        notes = "10x42",
+                    ),
+                ),
+            dogs =
+                listOf(
+                    HuntingDog(
+                        id = 7,
+                        userId = uid,
+                        name = "Rex",
+                        breed = "Pointer",
+                        ageYears = 3,
+                        notes = "Trained",
+                    ),
+                ),
         )
-    )
 
-    private fun emptyData() = BackupData(
-        trips = emptyList(),
-        spots = emptyList(),
-        equipment = emptyList(),
-        dogs = emptyList()
-    )
+    private fun emptyData() =
+        BackupData(
+            trips = emptyList(),
+            spots = emptyList(),
+            equipment = emptyList(),
+            dogs = emptyList(),
+        )
 
     @Test
     fun backupContainsCorrectSchemaVersion() {
-        val json = JSONObject(
-            CloudBackupCodec.encode(sampleData())
-        )
+        val json =
+            JSONObject(
+                CloudBackupCodec.encode(sampleData()),
+            )
 
         assertEquals(1, json.getInt("schemaVersion"))
     }
 
     @Test
     fun backupContainsAllFourCollections() {
-        val json = JSONObject(
-            CloudBackupCodec.encode(sampleData())
-        )
+        val json =
+            JSONObject(
+                CloudBackupCodec.encode(sampleData()),
+            )
 
         assertEquals(1, json.getJSONArray("trips").length())
         assertEquals(1, json.getJSONArray("spots").length())
         assertEquals(
-            1, json.getJSONArray("equipment").length()
+            1,
+            json.getJSONArray("equipment").length(),
         )
         assertEquals(1, json.getJSONArray("dogs").length())
     }
@@ -137,14 +147,17 @@ class CloudBackupCodecTest {
     @Test
     fun restoredDataUsesCurrentUserId() {
         val json = CloudBackupCodec.encode(sampleData())
-        val result = CloudBackupCodec.decode(
-            json, "another-user"
-        )
+        val result =
+            CloudBackupCodec.decode(
+                json,
+                "another-user",
+            )
 
         assertEquals("another-user", result.trips[0].userId)
         assertEquals("another-user", result.spots[0].userId)
         assertEquals(
-            "another-user", result.equipment[0].userId
+            "another-user",
+            result.equipment[0].userId,
         )
         assertEquals("another-user", result.dogs[0].userId)
     }
@@ -173,9 +186,10 @@ class CloudBackupCodecTest {
 
     @Test
     fun unsupportedSchemaIsRejected() {
-        val json = JSONObject(
-            CloudBackupCodec.encode(emptyData())
-        )
+        val json =
+            JSONObject(
+                CloudBackupCodec.encode(emptyData()),
+            )
 
         json.put("schemaVersion", 999)
 
@@ -197,7 +211,8 @@ class CloudBackupCodecTest {
     fun invalidLatitudeIsRejected() {
         assertThrows(IllegalArgumentException::class.java) {
             CloudBackupCodec.validateCoordinates(
-                95.0, 24.0
+                95.0,
+                24.0,
             )
         }
     }
@@ -206,7 +221,8 @@ class CloudBackupCodecTest {
     fun invalidLongitudeIsRejected() {
         assertThrows(IllegalArgumentException::class.java) {
             CloudBackupCodec.validateCoordinates(
-                42.0, 200.0
+                42.0,
+                200.0,
             )
         }
     }
@@ -221,16 +237,18 @@ class CloudBackupCodecTest {
     fun nonFiniteCoordinatesAreRejected() {
         assertThrows(IllegalArgumentException::class.java) {
             CloudBackupCodec.validateCoordinates(
-                Double.NaN, 24.0
+                Double.NaN,
+                24.0,
             )
         }
     }
 
     @Test
     fun oversizedPayloadIsRejected() {
-        val oversized = "a".repeat(
-            CloudBackupCodec.MAX_PAYLOAD_BYTES
-        )
+        val oversized =
+            "a".repeat(
+                CloudBackupCodec.MAX_PAYLOAD_BYTES,
+            )
 
         assertThrows(IllegalArgumentException::class.java) {
             CloudBackupCodec.checkSize(oversized)
@@ -248,16 +266,18 @@ class CloudBackupCodecTest {
 
     @Test
     fun invalidDogAgeIsRejectedOnUpload() {
-        val data = emptyData().copy(
-            dogs = listOf(
-                HuntingDog(
-                    userId = uid,
-                    name = "Rex",
-                    breed = "Pointer",
-                    ageYears = -2
-                )
+        val data =
+            emptyData().copy(
+                dogs =
+                    listOf(
+                        HuntingDog(
+                            userId = uid,
+                            name = "Rex",
+                            breed = "Pointer",
+                            ageYears = -2,
+                        ),
+                    ),
             )
-        )
 
         assertThrows(IllegalArgumentException::class.java) {
             CloudBackupCodec.encode(data)
@@ -266,11 +286,13 @@ class CloudBackupCodecTest {
 
     @Test
     fun invalidDogAgeIsRejectedOnRestore() {
-        val json = JSONObject(
-            CloudBackupCodec.encode(sampleData())
-        )
+        val json =
+            JSONObject(
+                CloudBackupCodec.encode(sampleData()),
+            )
 
-        json.getJSONArray("dogs")
+        json
+            .getJSONArray("dogs")
             .getJSONObject(0)
             .put("ageYears", 99)
 
@@ -281,9 +303,10 @@ class CloudBackupCodecTest {
 
     @Test
     fun missingCollectionsAreRejected() {
-        val json = JSONObject(
-            CloudBackupCodec.encode(emptyData())
-        )
+        val json =
+            JSONObject(
+                CloudBackupCodec.encode(emptyData()),
+            )
 
         json.remove("equipment")
 
@@ -294,27 +317,30 @@ class CloudBackupCodecTest {
 
     @Test
     fun specialCharactersArePreserved() {
-        val data = emptyData().copy(
-            trips = listOf(
-                HuntingTrip(
-                    userId = uid,
-                    date = "2026-11-22",
-                    location = "Родопите",
-                    gameSpecies = "Quail",
-                    notes = "Forest \"A\"\nMorning"
-                )
+        val data =
+            emptyData().copy(
+                trips =
+                    listOf(
+                        HuntingTrip(
+                            userId = uid,
+                            date = "2026-11-22",
+                            location = "Родопите",
+                            gameSpecies = "Quail",
+                            notes = "Forest \"A\"\nMorning",
+                        ),
+                    ),
             )
-        )
 
-        val result = CloudBackupCodec.decode(
-            CloudBackupCodec.encode(data),
-            uid
-        )
+        val result =
+            CloudBackupCodec.decode(
+                CloudBackupCodec.encode(data),
+                uid,
+            )
 
         assertEquals("Родопите", result.trips[0].location)
         assertEquals(
             "Forest \"A\"\nMorning",
-            result.trips[0].notes
+            result.trips[0].notes,
         )
     }
 }

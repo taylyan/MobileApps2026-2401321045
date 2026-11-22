@@ -27,7 +27,6 @@ import java.io.File
 import java.util.UUID
 
 class GalleryActivity : AppCompatActivity() {
-
     private lateinit var viewModel: GalleryViewModel
     private lateinit var adapter: GalleryAdapter
 
@@ -38,9 +37,8 @@ class GalleryActivity : AppCompatActivity() {
 
     private val cameraLauncher =
         registerForActivityResult(
-            ActivityResultContracts.TakePicture()
+            ActivityResultContracts.TakePicture(),
         ) { success ->
-
             val fileName = pendingPhotoName
             pendingPhotoName = null
 
@@ -66,7 +64,7 @@ class GalleryActivity : AppCompatActivity() {
                 },
                 onError = { error ->
                     message(error)
-                }
+                },
             )
         }
 
@@ -83,30 +81,34 @@ class GalleryActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_gallery)
 
-        viewModel = ViewModelProvider(this)[
-            GalleryViewModel::class.java
-        ]
-
-        val recycler = findViewById<RecyclerView>(
-            R.id.rvGallery
-        )
-        val emptyText = findViewById<TextView>(
-            R.id.tvGalleryEmpty
-        )
-        val takePhotoButton = findViewById<Button>(
-            R.id.btnTakePhoto
-        )
-
-        adapter = GalleryAdapter(
-            photoDirectory = photoDirectory(),
-            scope = lifecycleScope,
-            onView = { photo ->
-                showPhoto(photo)
-            },
-            onDelete = { photo ->
-                confirmDelete(photo)
+        findViewById<Button>(R.id.btnBack)
+            .setOnClickListener {
+                finish()
             }
-        )
+
+        viewModel =
+            ViewModelProvider(this)[
+                GalleryViewModel::class.java,
+            ]
+
+        val recycler =
+            findViewById<RecyclerView>(R.id.rvGallery)
+        val emptyText =
+            findViewById<TextView>(R.id.tvGalleryEmpty)
+        val takePhotoButton =
+            findViewById<Button>(R.id.btnTakePhoto)
+
+        adapter =
+            GalleryAdapter(
+                photoDirectory = photoDirectory(),
+                scope = lifecycleScope,
+                onView = { photo ->
+                    showPhoto(photo)
+                },
+                onDelete = { photo ->
+                    confirmDelete(photo)
+                },
+            )
 
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
@@ -132,60 +134,64 @@ class GalleryActivity : AppCompatActivity() {
         }
     }
 
-    private fun photoDirectory(): File {
-        return File(filesDir, "photos").apply {
+    private fun photoDirectory(): File =
+        File(filesDir, "photos").apply {
             mkdirs()
         }
-    }
 
+    // Camera launch may fail for several platform-specific reasons.
+    @Suppress("TooGenericExceptionCaught")
     private fun takePhoto() {
         val fileName = "photo_${UUID.randomUUID()}.jpg"
         val file = File(photoDirectory(), fileName)
 
         try {
-            val uri = FileProvider.getUriForFile(
-                this,
-                "${packageName}.fileprovider",
-                file
-            )
+            val uri =
+                FileProvider.getUriForFile(
+                    this,
+                    "$packageName.fileprovider",
+                    file,
+                )
 
             pendingPhotoName = fileName
             cameraLauncher.launch(uri)
-
         } catch (e: Exception) {
             pendingPhotoName = null
             file.delete()
             message(
-                e.localizedMessage ?: "Cannot open camera."
+                e.localizedMessage ?: "Cannot open camera.",
             )
         }
     }
 
     private fun showPhoto(photo: HuntingPhoto) {
+        val imageView =
+            ImageView(this).apply {
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                adjustViewBounds = true
+                setPadding(8, 8, 8, 8)
+                minimumHeight =
+                    (300 * resources.displayMetrics.density).toInt()
+            }
 
-        val imageView = ImageView(this).apply {
-            scaleType = ImageView.ScaleType.FIT_CENTER
-            adjustViewBounds = true
-            setPadding(8, 8, 8, 8)
-            minimumHeight =
-                (300 * resources.displayMetrics.density).toInt()
-        }
-
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Hunting Photo")
-            .setView(imageView)
-            .setPositiveButton("Close", null)
-            .create()
+        val dialog =
+            AlertDialog
+                .Builder(this)
+                .setTitle("Hunting Photo")
+                .setView(imageView)
+                .setPositiveButton("Close", null)
+                .create()
 
         dialog.show()
 
         lifecycleScope.launch {
-            val bitmap = withContext(Dispatchers.IO) {
-                decodeSampledPhoto(
-                    viewModel.photoFile(photo),
-                    1200
-                )
-            }
+            val bitmap =
+                withContext(Dispatchers.IO) {
+                    decodeSampledPhoto(
+                        viewModel.photoFile(photo),
+                        1200,
+                    )
+                }
 
             if (dialog.isShowing) {
                 imageView.setImageBitmap(bitmap)
@@ -196,13 +202,12 @@ class GalleryActivity : AppCompatActivity() {
     private fun confirmDelete(photo: HuntingPhoto) {
         val currentUid = uid ?: return
 
-        AlertDialog.Builder(this)
+        AlertDialog
+            .Builder(this)
             .setTitle("Delete Photo")
             .setMessage(
-                "Are you sure you want to delete this photo?"
-            )
-            .setPositiveButton("Delete") { _, _ ->
-
+                "Are you sure you want to delete this photo?",
+            ).setPositiveButton("Delete") { _, _ ->
                 viewModel.delete(
                     photo = photo,
                     uid = currentUid,
@@ -211,26 +216,26 @@ class GalleryActivity : AppCompatActivity() {
                     },
                     onError = { error ->
                         message(error)
-                    }
+                    },
                 )
-            }
-            .setNegativeButton("Cancel", null)
+            }.setNegativeButton("Cancel", null)
             .show()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(
             "pending_photo",
-            pendingPhotoName
+            pendingPhotoName,
         )
         super.onSaveInstanceState(outState)
     }
 
     private fun message(text: String) {
-        Toast.makeText(
-            this,
-            text,
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast
+            .makeText(
+                this,
+                text,
+                Toast.LENGTH_SHORT,
+            ).show()
     }
 }

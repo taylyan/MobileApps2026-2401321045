@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HuntingTripDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(trip: HuntingTrip): Long
 
@@ -21,21 +20,25 @@ interface HuntingTripDao {
     @Delete
     suspend fun delete(trip: HuntingTrip)
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM hunting_trips
         WHERE userId = :userId
         ORDER BY date DESC
-    """)
+    """,
+    )
     fun getTripsByUser(userId: String): Flow<List<HuntingTrip>>
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM hunting_trips
         WHERE id = :tripId AND userId = :userId
         LIMIT 1
-    """)
+    """,
+    )
     suspend fun getTripById(
         tripId: Long,
-        userId: String
+        userId: String,
     ): HuntingTrip?
 
     @Query("DELETE FROM hunting_trips WHERE userId = :uid")

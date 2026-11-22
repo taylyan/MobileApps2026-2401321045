@@ -75,15 +75,10 @@
             android:layout_marginTop="12dp"/>
 
         <Button
-            android:id="@+id/btnProfile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Profile &amp; Settings"
-            android:layout_marginTop="12dp"/>
-        <Button
             android:id="@+id/btnCloudSync"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="Cloud Backup" />
 
         <TextView
@@ -104,5 +99,4 @@
             android:layout_marginTop="12dp" />
 
     </LinearLayout>
-</ScrollView
-    >
+</ScrollView>

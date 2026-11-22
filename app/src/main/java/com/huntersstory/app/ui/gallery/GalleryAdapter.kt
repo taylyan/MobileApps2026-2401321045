@@ -23,10 +23,14 @@ import java.io.File
 import java.text.DateFormat
 import java.util.Date
 
-fun decodeSampledPhoto(file: File, maxSize: Int): Bitmap? {
-    val options = BitmapFactory.Options().apply {
-        inJustDecodeBounds = true
-    }
+fun decodeSampledPhoto(
+    file: File,
+    maxSize: Int,
+): Bitmap? {
+    val options =
+        BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
 
     BitmapFactory.decodeFile(file.absolutePath, options)
 
@@ -47,7 +51,7 @@ fun decodeSampledPhoto(file: File, maxSize: Int): Bitmap? {
         file.absolutePath,
         BitmapFactory.Options().apply {
             inSampleSize = sampleSize
-        }
+        },
     )
 }
 
@@ -55,14 +59,13 @@ class GalleryAdapter(
     private val photoDirectory: File,
     private val scope: CoroutineScope,
     private val onView: (HuntingPhoto) -> Unit,
-    private val onDelete: (HuntingPhoto) -> Unit
+    private val onDelete: (HuntingPhoto) -> Unit,
 ) : ListAdapter<HuntingPhoto, GalleryAdapter.PhotoHolder>(
-    PhotoDiff()
-) {
-
-    class PhotoHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+        PhotoDiff(),
+    ) {
+    class PhotoHolder(
+        view: View,
+    ) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.ivPhoto)
         val date: TextView = view.findViewById(R.id.tvPhotoDate)
         val viewButton: Button =
@@ -75,16 +78,18 @@ class GalleryAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): PhotoHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_photo, parent, false)
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_photo, parent, false)
         return PhotoHolder(view)
     }
 
     override fun onBindViewHolder(
         holder: PhotoHolder,
-        position: Int
+        position: Int,
     ) {
         val photo = getItem(position)
         val file = File(photoDirectory, photo.fileName)
@@ -92,16 +97,20 @@ class GalleryAdapter(
         holder.imageJob?.cancel()
         holder.image.setImageDrawable(null)
 
-        holder.date.text = DateFormat.getDateTimeInstance()
-            .format(Date(photo.createdAt))
+        holder.date.text =
+            DateFormat
+                .getDateTimeInstance()
+                .format(Date(photo.createdAt))
 
-        holder.imageJob = scope.launch {
-            val bitmap = withContext(Dispatchers.IO) {
-                decodeSampledPhoto(file, 300)
+        holder.imageJob =
+            scope.launch {
+                val bitmap =
+                    withContext(Dispatchers.IO) {
+                        decodeSampledPhoto(file, 300)
+                    }
+
+                holder.image.setImageBitmap(bitmap)
             }
-
-            holder.image.setImageBitmap(bitmap)
-        }
 
         holder.image.setOnClickListener {
             onView(photo)
@@ -123,15 +132,14 @@ class GalleryAdapter(
     }
 
     class PhotoDiff : DiffUtil.ItemCallback<HuntingPhoto>() {
-
         override fun areItemsTheSame(
             oldItem: HuntingPhoto,
-            newItem: HuntingPhoto
+            newItem: HuntingPhoto,
         ): Boolean = oldItem.id == newItem.id
 
         override fun areContentsTheSame(
             oldItem: HuntingPhoto,
-            newItem: HuntingPhoto
+            newItem: HuntingPhoto,
         ): Boolean = oldItem == newItem
     }
 }

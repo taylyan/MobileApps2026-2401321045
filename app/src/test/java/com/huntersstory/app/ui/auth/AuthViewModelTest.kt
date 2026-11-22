@@ -4,27 +4,25 @@ import com.google.firebase.auth.FirebaseUser
 import com.huntersstory.app.data.repository.AuthRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.test.resetMain
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {
-
     private lateinit var repository: AuthRepository
     private lateinit var viewModel: AuthViewModel
 
@@ -50,7 +48,7 @@ class AuthViewModelTest {
         assertTrue(state is AuthUiState.Error)
         assertEquals(
             expected,
-            (state as AuthUiState.Error).message
+            (state as AuthUiState.Error).message,
         )
     }
 
@@ -62,7 +60,7 @@ class AuthViewModelTest {
     fun initialStateIsIdle() {
         assertEquals(
             AuthUiState.Idle,
-            viewModel.uiState.value
+            viewModel.uiState.value,
         )
     }
 
@@ -72,7 +70,7 @@ class AuthViewModelTest {
 
         assertEquals(
             AuthUiState.Idle,
-            viewModel.uiState.value
+            viewModel.uiState.value,
         )
     }
 
@@ -85,7 +83,7 @@ class AuthViewModelTest {
         viewModel.login("", password)
 
         assertError(
-            "Email and password are required."
+            "Email and password are required.",
         )
 
         coVerify(exactly = 0) {
@@ -98,7 +96,7 @@ class AuthViewModelTest {
         viewModel.login(email, "")
 
         assertError(
-            "Email and password are required."
+            "Email and password are required.",
         )
     }
 
@@ -107,7 +105,7 @@ class AuthViewModelTest {
         viewModel.login("   ", password)
 
         assertError(
-            "Email and password are required."
+            "Email and password are required.",
         )
     }
 
@@ -116,7 +114,7 @@ class AuthViewModelTest {
         viewModel.login(email, "   ")
 
         assertError(
-            "Email and password are required."
+            "Email and password are required.",
         )
     }
 
@@ -125,7 +123,7 @@ class AuthViewModelTest {
         viewModel.register("", password)
 
         assertError(
-            "Email and password are required."
+            "Email and password are required.",
         )
     }
 
@@ -134,7 +132,7 @@ class AuthViewModelTest {
         viewModel.register(email, "")
 
         assertError(
-            "Email and password are required."
+            "Email and password are required.",
         )
     }
 
@@ -143,7 +141,7 @@ class AuthViewModelTest {
         viewModel.register(email, "12345")
 
         assertError(
-            "Password must be at least 6 characters."
+            "Password must be at least 6 characters.",
         )
 
         coVerify(exactly = 0) {
@@ -166,7 +164,7 @@ class AuthViewModelTest {
 
             assertEquals(
                 AuthUiState.Success,
-                viewModel.uiState.value
+                viewModel.uiState.value,
             )
         }
 
@@ -175,54 +173,58 @@ class AuthViewModelTest {
     // ==================================
 
     @Test
-    fun successfulLoginSetsSuccessState() = runTest {
-        val user = mockk<FirebaseUser>()
+    fun successfulLoginSetsSuccessState() =
+        runTest {
+            val user = mockk<FirebaseUser>()
 
-        coEvery {
-            repository.login(email, password)
-        } returns user
+            coEvery {
+                repository.login(email, password)
+            } returns user
 
-        viewModel.login(email, password)
+            viewModel.login(email, password)
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertEquals(
-            AuthUiState.Success,
-            viewModel.uiState.value
-        )
+            assertEquals(
+                AuthUiState.Success,
+                viewModel.uiState.value,
+            )
 
-        coVerify(exactly = 1) {
-            repository.login(email, password)
+            coVerify(exactly = 1) {
+                repository.login(email, password)
+            }
         }
-    }
 
     @Test
-    fun loginWithNullUserShowsError() = runTest {
-        coEvery {
-            repository.login(email, password)
-        } returns null
+    fun loginWithNullUserShowsError() =
+        runTest {
+            coEvery {
+                repository.login(email, password)
+            } returns null
 
-        viewModel.login(email, password)
+            viewModel.login(email, password)
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertError("Authentication failed.")
-    }
+            assertError("Authentication failed.")
+        }
 
     @Test
-    fun loginExceptionShowsError() = runTest {
-        coEvery {
-            repository.login(email, password)
-        } throws IllegalStateException(
-            "Invalid credentials"
-        )
+    fun loginExceptionShowsError() =
+        runTest {
+            coEvery {
+                repository.login(email, password)
+            } throws
+                IllegalStateException(
+                    "Invalid credentials",
+                )
 
-        viewModel.login(email, password)
+            viewModel.login(email, password)
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertError("Invalid credentials")
-    }
+            assertError("Invalid credentials")
+        }
 
     @Test
     fun loginExceptionWithoutMessageUsesFallback() =
@@ -236,73 +238,75 @@ class AuthViewModelTest {
             advanceUntilIdle()
 
             assertError(
-                "An unexpected error occurred."
+                "An unexpected error occurred.",
             )
         }
 
     @Test
-    fun loginFirstEntersLoadingState() = runTest {
-        val started = CompletableDeferred<Unit>()
-        val continueLogin = CompletableDeferred<Unit>()
-        val user = mockk<FirebaseUser>()
+    fun loginFirstEntersLoadingState() =
+        runTest {
+            val started = CompletableDeferred<Unit>()
+            val continueLogin = CompletableDeferred<Unit>()
+            val user = mockk<FirebaseUser>()
 
-        coEvery {
-            repository.login(email, password)
-        } coAnswers {
-            started.complete(Unit)
-            continueLogin.await()
-            user
+            coEvery {
+                repository.login(email, password)
+            } coAnswers {
+                started.complete(Unit)
+                continueLogin.await()
+                user
+            }
+
+            viewModel.login(email, password)
+
+            runCurrent()
+            started.await()
+
+            assertEquals(
+                AuthUiState.Loading,
+                viewModel.uiState.value,
+            )
+
+            continueLogin.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                AuthUiState.Success,
+                viewModel.uiState.value,
+            )
         }
-
-        viewModel.login(email, password)
-
-        runCurrent()
-        started.await()
-
-        assertEquals(
-            AuthUiState.Loading,
-            viewModel.uiState.value
-        )
-
-        continueLogin.complete(Unit)
-        advanceUntilIdle()
-
-        assertEquals(
-            AuthUiState.Success,
-            viewModel.uiState.value
-        )
-    }
 
     @Test
-    fun secondLoginWhileLoadingIsIgnored() = runTest {
-        val continueLogin = CompletableDeferred<Unit>()
-        val user = mockk<FirebaseUser>()
+    fun secondLoginWhileLoadingIsIgnored() =
+        runTest {
+            val continueLogin = CompletableDeferred<Unit>()
+            val user = mockk<FirebaseUser>()
 
-        coEvery {
-            repository.login(email, password)
-        } coAnswers {
-            continueLogin.await()
-            user
+            coEvery {
+                repository.login(email, password)
+            } coAnswers {
+                continueLogin.await()
+                user
+            }
+
+            viewModel.login(email, password)
+            runCurrent()
+
+            assertEquals(
+                AuthUiState.Loading,
+                viewModel.uiState.value,
+            )
+
+            viewModel.login(email, password)
+            runCurrent()
+
+            coVerify(exactly = 1) {
+                repository.login(email, password)
+            }
+
+            continueLogin.complete(Unit)
+            advanceUntilIdle()
         }
-
-        viewModel.login(email, password)
-        runCurrent()
-
-        assertEquals(
-            AuthUiState.Loading,
-            viewModel.uiState.value
-        )
-
-        viewModel.login(email, password)
-        runCurrent()
-
-        coVerify(exactly = 1) {
-            repository.login(email, password)
-        }
-
-        continueLogin.complete(Unit)
-        advanceUntilIdle()
-    }
 
     // ==================================
     // REGISTER
@@ -323,7 +327,7 @@ class AuthViewModelTest {
 
             assertEquals(
                 AuthUiState.Success,
-                viewModel.uiState.value
+                viewModel.uiState.value,
             )
 
             coVerify(exactly = 1) {
@@ -332,61 +336,65 @@ class AuthViewModelTest {
         }
 
     @Test
-    fun registerWithNullUserShowsError() = runTest {
-        coEvery {
-            repository.register(email, password)
-        } returns null
+    fun registerWithNullUserShowsError() =
+        runTest {
+            coEvery {
+                repository.register(email, password)
+            } returns null
 
-        viewModel.register(email, password)
+            viewModel.register(email, password)
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertError("Authentication failed.")
-    }
-
-    @Test
-    fun registerExceptionShowsError() = runTest {
-        coEvery {
-            repository.register(email, password)
-        } throws IllegalStateException(
-            "Email already in use"
-        )
-
-        viewModel.register(email, password)
-
-        advanceUntilIdle()
-
-        assertError("Email already in use")
-    }
-
-    @Test
-    fun registerFirstEntersLoadingState() = runTest {
-        val continueRegister = CompletableDeferred<Unit>()
-        val user = mockk<FirebaseUser>()
-
-        coEvery {
-            repository.register(email, password)
-        } coAnswers {
-            continueRegister.await()
-            user
+            assertError("Authentication failed.")
         }
 
-        viewModel.register(email, password)
-        runCurrent()
+    @Test
+    fun registerExceptionShowsError() =
+        runTest {
+            coEvery {
+                repository.register(email, password)
+            } throws
+                IllegalStateException(
+                    "Email already in use",
+                )
 
-        assertEquals(
-            AuthUiState.Loading,
-            viewModel.uiState.value
-        )
+            viewModel.register(email, password)
 
-        continueRegister.complete(Unit)
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertEquals(
-            AuthUiState.Success,
-            viewModel.uiState.value
-        )
-    }
+            assertError("Email already in use")
+        }
+
+    @Test
+    fun registerFirstEntersLoadingState() =
+        runTest {
+            val continueRegister = CompletableDeferred<Unit>()
+            val user = mockk<FirebaseUser>()
+
+            coEvery {
+                repository.register(email, password)
+            } coAnswers {
+                continueRegister.await()
+                user
+            }
+
+            viewModel.register(email, password)
+            runCurrent()
+
+            assertEquals(
+                AuthUiState.Loading,
+                viewModel.uiState.value,
+            )
+
+            continueRegister.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                AuthUiState.Success,
+                viewModel.uiState.value,
+            )
+        }
 
     // ==================================
     // LOGOUT AND CLEAR STATE
@@ -406,14 +414,14 @@ class AuthViewModelTest {
         viewModel.login("", "")
 
         assertTrue(
-            viewModel.uiState.value is AuthUiState.Error
+            viewModel.uiState.value is AuthUiState.Error,
         )
 
         viewModel.logout()
 
         assertEquals(
             AuthUiState.Idle,
-            viewModel.uiState.value
+            viewModel.uiState.value,
         )
     }
 
@@ -422,32 +430,33 @@ class AuthViewModelTest {
         viewModel.register(email, "123")
 
         assertTrue(
-            viewModel.uiState.value is AuthUiState.Error
+            viewModel.uiState.value is AuthUiState.Error,
         )
 
         viewModel.clearState()
 
         assertEquals(
             AuthUiState.Idle,
-            viewModel.uiState.value
+            viewModel.uiState.value,
         )
     }
 
     @Test
-    fun validLoginAllowsShortPassword() = runTest {
-        val user = mockk<FirebaseUser>()
+    fun validLoginAllowsShortPassword() =
+        runTest {
+            val user = mockk<FirebaseUser>()
 
-        coEvery {
-            repository.login(email, "123")
-        } returns user
+            coEvery {
+                repository.login(email, "123")
+            } returns user
 
-        viewModel.login(email, "123")
+            viewModel.login(email, "123")
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertEquals(
-            AuthUiState.Success,
-            viewModel.uiState.value
-        )
-    }
+            assertEquals(
+                AuthUiState.Success,
+                viewModel.uiState.value,
+            )
+        }
 }

@@ -9,12 +9,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class AuthRepositoryTest {
-
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var repository: AuthRepository
 
@@ -48,7 +51,7 @@ class AuthRepositoryTest {
 
         assertSame(
             user,
-            repository.currentUser
+            repository.currentUser,
         )
     }
 
@@ -62,73 +65,84 @@ class AuthRepositoryTest {
     }
 
     @Test
-    fun successfulLoginReturnsUser() = runBlocking {
-        val result = successfulAuthResult()
+    fun successfulLoginReturnsUser() =
+        runBlocking {
+            val result = successfulAuthResult()
 
-        every {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, password
-            )
-        } returns Tasks.forResult(result)
+            every {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            } returns Tasks.forResult(result)
 
-        val user = repository.login(
-            email, password
-        )
+            val user =
+                repository.login(
+                    email,
+                    password,
+                )
 
-        assertNotNull(user)
-        assertSame(result.user, user)
+            assertNotNull(user)
+            assertSame(result.user, user)
 
-        verify(exactly = 1) {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, password
-            )
+            verify(exactly = 1) {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            }
         }
-    }
 
     @Test
-    fun loginTrimsEmail() = runBlocking {
-        val result = successfulAuthResult()
+    fun loginTrimsEmail() =
+        runBlocking {
+            val result = successfulAuthResult()
 
-        every {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, password
+            every {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            } returns Tasks.forResult(result)
+
+            repository.login(
+                "   $email   ",
+                password,
             )
-        } returns Tasks.forResult(result)
 
-        repository.login(
-            "   $email   ",
-            password
-        )
-
-        verify(exactly = 1) {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, password
-            )
+            verify(exactly = 1) {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            }
         }
-    }
 
     @Test
-    fun loginKeepsPasswordUnchanged() = runBlocking {
-        val passwordWithSpaces = " hunter123 "
-        val result = successfulAuthResult()
+    fun loginKeepsPasswordUnchanged() =
+        runBlocking {
+            val passwordWithSpaces = " hunter123 "
+            val result = successfulAuthResult()
 
-        every {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, passwordWithSpaces
+            every {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    passwordWithSpaces,
+                )
+            } returns Tasks.forResult(result)
+
+            repository.login(
+                email,
+                passwordWithSpaces,
             )
-        } returns Tasks.forResult(result)
 
-        repository.login(
-            email,
-            passwordWithSpaces
-        )
-
-        verify(exactly = 1) {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, passwordWithSpaces
-            )
+            verify(exactly = 1) {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    passwordWithSpaces,
+                )
+            }
         }
-    }
 
     @Test
     fun loginReturnsNullWhenResultHasNoUser() =
@@ -141,35 +155,40 @@ class AuthRepositoryTest {
 
             every {
                 firebaseAuth.signInWithEmailAndPassword(
-                    email, password
+                    email,
+                    password,
                 )
             } returns Tasks.forResult(result)
 
             assertNull(
-                repository.login(email, password)
+                repository.login(email, password),
             )
         }
 
     @Test
-    fun loginPropagatesFirebaseFailure() = runBlocking {
-        every {
-            firebaseAuth.signInWithEmailAndPassword(
-                email, password
+    fun loginPropagatesFirebaseFailure() =
+        runBlocking {
+            every {
+                firebaseAuth.signInWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            } returns
+                Tasks.forException(
+                    IllegalStateException("Invalid password"),
+                )
+
+            val error =
+                runCatching {
+                    repository.login(email, password)
+                }.exceptionOrNull()
+
+            assertTrue(error is IllegalStateException)
+            assertEquals(
+                "Invalid password",
+                error?.message,
             )
-        } returns Tasks.forException(
-            IllegalStateException("Invalid password")
-        )
-
-        val error = runCatching {
-            repository.login(email, password)
-        }.exceptionOrNull()
-
-        assertTrue(error is IllegalStateException)
-        assertEquals(
-            "Invalid password",
-            error?.message
-        )
-    }
+        }
 
     @Test
     fun successfulRegistrationReturnsUser() =
@@ -178,45 +197,52 @@ class AuthRepositoryTest {
 
             every {
                 firebaseAuth.createUserWithEmailAndPassword(
-                    email, password
+                    email,
+                    password,
                 )
             } returns Tasks.forResult(result)
 
-            val user = repository.register(
-                email, password
-            )
+            val user =
+                repository.register(
+                    email,
+                    password,
+                )
 
             assertNotNull(user)
             assertSame(result.user, user)
 
             verify(exactly = 1) {
                 firebaseAuth.createUserWithEmailAndPassword(
-                    email, password
+                    email,
+                    password,
                 )
             }
         }
 
     @Test
-    fun registrationTrimsEmail() = runBlocking {
-        val result = successfulAuthResult()
+    fun registrationTrimsEmail() =
+        runBlocking {
+            val result = successfulAuthResult()
 
-        every {
-            firebaseAuth.createUserWithEmailAndPassword(
-                email, password
+            every {
+                firebaseAuth.createUserWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            } returns Tasks.forResult(result)
+
+            repository.register(
+                "   $email   ",
+                password,
             )
-        } returns Tasks.forResult(result)
 
-        repository.register(
-            "   $email   ",
-            password
-        )
-
-        verify(exactly = 1) {
-            firebaseAuth.createUserWithEmailAndPassword(
-                email, password
-            )
+            verify(exactly = 1) {
+                firebaseAuth.createUserWithEmailAndPassword(
+                    email,
+                    password,
+                )
+            }
         }
-    }
 
     @Test
     fun registrationReturnsNullWhenUserMissing() =
@@ -229,12 +255,13 @@ class AuthRepositoryTest {
 
             every {
                 firebaseAuth.createUserWithEmailAndPassword(
-                    email, password
+                    email,
+                    password,
                 )
             } returns Tasks.forResult(result)
 
             assertNull(
-                repository.register(email, password)
+                repository.register(email, password),
             )
         }
 
@@ -243,20 +270,23 @@ class AuthRepositoryTest {
         runBlocking {
             every {
                 firebaseAuth.createUserWithEmailAndPassword(
-                    email, password
+                    email,
+                    password,
                 )
-            } returns Tasks.forException(
-                IllegalStateException("Email already used")
-            )
+            } returns
+                Tasks.forException(
+                    IllegalStateException("Email already used"),
+                )
 
-            val error = runCatching {
-                repository.register(email, password)
-            }.exceptionOrNull()
+            val error =
+                runCatching {
+                    repository.register(email, password)
+                }.exceptionOrNull()
 
             assertTrue(error is IllegalStateException)
             assertEquals(
                 "Email already used",
-                error?.message
+                error?.message,
             )
         }
 

@@ -1,3 +1,4 @@
+
 package com.huntersstory.app
 
 import android.content.Intent
@@ -9,16 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
-import com.huntersstory.app.ui.login.LoginActivity
-import com.huntersstory.app.ui.journal.JournalActivity
-import com.huntersstory.app.ui.spots.SpotsActivity
 import com.huntersstory.app.ui.collection.CollectionActivity
 import com.huntersstory.app.ui.gallery.GalleryActivity
+import com.huntersstory.app.ui.journal.JournalActivity
+import com.huntersstory.app.ui.login.LoginActivity
+import com.huntersstory.app.ui.spots.SpotsActivity
 import com.huntersstory.app.ui.sync.CloudSyncActivity
 
-
 class MainActivity : AppCompatActivity() {
-
     private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,94 +31,95 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        setupWindowInsets()
+        setupAccount()
+        setupNavigation()
+    }
+
+    private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
-            findViewById(R.id.main)
+            findViewById(R.id.main),
         ) { view, insets ->
-            val systemBars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-            )
+            val systemBars =
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                )
+
             view.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
-                systemBars.bottom
+                systemBars.bottom,
             )
             insets
         }
+    }
 
-        val userEmail = findViewById<TextView>(R.id.tvUserEmail)
-        val logoutButton = findViewById<Button>(R.id.btnLogout)
+    private fun setupAccount() {
+        findViewById<TextView>(R.id.tvUserEmail).text =
+            "Signed in as: ${auth.currentUser?.email}"
 
-        userEmail.text = "Signed in as: ${auth.currentUser?.email}"
+        findViewById<Button>(R.id.btnLogout)
+            .setOnClickListener {
+                auth.signOut()
+                openLogin()
+            }
+    }
 
-        logoutButton.setOnClickListener {
-            auth.signOut()
-            openLogin()
-        }
+    private fun setupNavigation() {
+        findViewById<Button>(R.id.btnJournal)
+            .setOnClickListener {
+                startActivity(
+                    Intent(this, JournalActivity::class.java),
+                )
+            }
 
-        val journalButton = findViewById<Button>(R.id.btnJournal)
+        findViewById<Button>(R.id.btnSpots)
+            .setOnClickListener {
+                startActivity(
+                    Intent(this, SpotsActivity::class.java),
+                )
+            }
 
-        journalButton.setOnClickListener {
-            val intent = Intent(this, JournalActivity::class.java)
-            startActivity(intent)
-        }
+        findViewById<Button>(R.id.btnEquipment)
+            .setOnClickListener {
+                openCollection("equipment")
+            }
 
-        val spotsButton = findViewById<Button>(R.id.btnSpots)
+        findViewById<Button>(R.id.btnDogs)
+            .setOnClickListener {
+                openCollection("dogs")
+            }
 
-        spotsButton.setOnClickListener {
-            startActivity(
-                Intent(this, SpotsActivity::class.java)
-            )
-        }
+        findViewById<Button>(R.id.btnGallery)
+            .setOnClickListener {
+                startActivity(
+                    Intent(this, GalleryActivity::class.java),
+                )
+            }
 
-        val equipmentButton =
-            findViewById<Button>(R.id.btnEquipment)
+        findViewById<Button>(R.id.btnCloudSync)
+            .setOnClickListener {
+                startActivity(
+                    Intent(this, CloudSyncActivity::class.java),
+                )
+            }
+    }
 
-        equipmentButton.setOnClickListener {
-            val intent = Intent(
-                this,
-                CollectionActivity::class.java
-            )
+    private fun openCollection(collectionType: String) {
+        val intent =
+            Intent(this, CollectionActivity::class.java)
 
-            intent.putExtra("collection_type", "equipment")
-            startActivity(intent)
-        }
-
-        val dogsButton =
-            findViewById<Button>(R.id.btnDogs)
-
-        dogsButton.setOnClickListener {
-            val intent = Intent(
-                this,
-                CollectionActivity::class.java
-            )
-
-            intent.putExtra("collection_type", "dogs")
-            startActivity(intent)
-        }
-
-        val galleryButton = findViewById<Button>(R.id.btnGallery)
-
-        galleryButton.setOnClickListener {
-            startActivity(
-                Intent(this, GalleryActivity::class.java)
-            )
-        }
-
-        val cloudButton = findViewById<Button>(R.id.btnCloudSync)
-
-        cloudButton.setOnClickListener {
-            startActivity(
-                Intent(this, CloudSyncActivity::class.java)
-            )
-        }
-
+        intent.putExtra("collection_type", collectionType)
+        startActivity(intent)
     }
 
     private fun openLogin() {
         val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+            Intent.FLAG_ACTIVITY_CLEAR_TASK
+
         startActivity(intent)
         finish()
     }

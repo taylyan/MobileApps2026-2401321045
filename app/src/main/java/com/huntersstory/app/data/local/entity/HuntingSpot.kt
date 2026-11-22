@@ -12,5 +12,5 @@ data class HuntingSpot(
     val name: String,
     val latitude: Double,
     val longitude: Double,
-    val notes: String = ""
+    val notes: String = "",
 )

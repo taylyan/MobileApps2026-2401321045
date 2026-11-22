@@ -12,5 +12,5 @@ data class HuntingDog(
     val name: String,
     val breed: String,
     val ageYears: Int,
-    val notes: String = ""
+    val notes: String = "",
 )

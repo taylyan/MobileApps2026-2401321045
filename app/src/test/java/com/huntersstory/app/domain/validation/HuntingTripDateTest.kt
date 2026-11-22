@@ -1,11 +1,13 @@
 
 package com.huntersstory.app.domain.validation
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HuntingTripDateTest {
-
     @Test
     fun leapYear2024IsValid() {
         assertTrue(HuntingTripValidator.isLeapYear(2024))
@@ -29,70 +31,70 @@ class HuntingTripDateTest {
     @Test
     fun validFebruary29() {
         assertTrue(
-            HuntingTripValidator.isValidCalendarDate("2024-02-29")
+            HuntingTripValidator.isValidCalendarDate("2024-02-29"),
         )
     }
 
     @Test
     fun invalidFebruary29() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("2025-02-29")
+            HuntingTripValidator.isValidCalendarDate("2025-02-29"),
         )
     }
 
     @Test
     fun february31IsInvalid() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("2026-02-31")
+            HuntingTripValidator.isValidCalendarDate("2026-02-31"),
         )
     }
 
     @Test
     fun april31IsInvalid() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("2026-04-31")
+            HuntingTripValidator.isValidCalendarDate("2026-04-31"),
         )
     }
 
     @Test
     fun december31IsValid() {
         assertTrue(
-            HuntingTripValidator.isValidCalendarDate("2026-12-31")
+            HuntingTripValidator.isValidCalendarDate("2026-12-31"),
         )
     }
 
     @Test
     fun invalidMonth13() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("2026-13-10")
+            HuntingTripValidator.isValidCalendarDate("2026-13-10"),
         )
     }
 
     @Test
     fun invalidMonthZero() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("2026-00-10")
+            HuntingTripValidator.isValidCalendarDate("2026-00-10"),
         )
     }
 
     @Test
     fun invalidDayZero() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("2026-11-00")
+            HuntingTripValidator.isValidCalendarDate("2026-11-00"),
         )
     }
 
     @Test
     fun invalidYearZero() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("0000-11-22")
+            HuntingTripValidator.isValidCalendarDate("0000-11-22"),
         )
     }
 
     @Test
     fun incorrectFormatIsRejected() {
         assertFalse(
-            HuntingTripValidator.isValidCalendarDate("22-11-2026")
+            HuntingTripValidator.isValidCalendarDate("22-11-2026"),
         )
     }
 
@@ -102,8 +104,8 @@ class HuntingTripDateTest {
             HuntingTripValidator.validate(
                 "2026-11-22",
                 "Kuklen",
-                "Pheasant"
-            )
+                "Pheasant",
+            ),
         )
     }
 
@@ -114,8 +116,8 @@ class HuntingTripDateTest {
             HuntingTripValidator.validate(
                 "2026-02-31",
                 "Kuklen",
-                "Pheasant"
-            )
+                "Pheasant",
+            ),
         )
     }
 }

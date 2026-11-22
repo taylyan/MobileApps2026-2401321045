@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Pheasant"
-        android:textColor="#234D32"
+        android:textColor="@color/hs_primary"
         android:textSize="20sp"
         android:textStyle="bold" />
 

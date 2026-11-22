@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Photo date"
-            android:textColor="#234D32"
+            android:textColor="@color/hs_primary"
             android:textStyle="bold" />
 
         <Button

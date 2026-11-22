@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hs_background">#121B16</color>
+    <color name="hs_surface">#1B2A20</color>
+    <color name="hs_primary">#A7D7B0</color>
+    <color name="hs_on_primary">#142E1D</color>
+    <color name="hs_text_primary">#EDF4EF</color>
+    <color name="hs_text_secondary">#B8C9BC</color>
+</resources>

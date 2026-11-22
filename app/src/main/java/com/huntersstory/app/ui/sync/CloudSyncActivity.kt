@@ -35,7 +35,7 @@ class CloudSyncActivity : AppCompatActivity() {
             .setOnClickListener {
                 finish()
             }
-        
+
         viewModel =
             ViewModelProvider(this)[
                 CloudSyncViewModel::class.java,

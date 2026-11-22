@@ -16,11 +16,13 @@ import com.huntersstory.app.ui.journal.JournalActivity
 import com.huntersstory.app.ui.login.LoginActivity
 import com.huntersstory.app.ui.spots.SpotsActivity
 import com.huntersstory.app.ui.sync.CloudSyncActivity
+import com.huntersstory.app.util.ThemeManager
 
 class MainActivity : AppCompatActivity() {
     private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.restore(this)
         super.onCreate(savedInstanceState)
 
         if (auth.currentUser == null) {
@@ -30,10 +32,25 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-
+        setupThemeToggle()
         setupWindowInsets()
         setupAccount()
         setupNavigation()
+    }
+
+    private fun setupThemeToggle() {
+        val themeButton = findViewById<Button>(R.id.btnThemeToggle)
+
+        themeButton.text =
+            if (ThemeManager.isDarkMode(this)) {
+                "Switch to Light Mode"
+            } else {
+                "Switch to Dark Mode"
+            }
+
+        themeButton.setOnClickListener {
+            ThemeManager.toggle(this)
+        }
     }
 
     private fun setupWindowInsets() {

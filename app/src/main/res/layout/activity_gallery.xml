@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#F4F6F3">
+    android:background="@color/hs_background">
     <include layout="@layout/layout_back_button" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hunting Gallery"
-        android:textColor="#234D32"
+        android:textColor="@color/hs_primary"
         android:textSize="28sp"
         android:textStyle="bold"
         android:layout_marginBottom="12dp" />

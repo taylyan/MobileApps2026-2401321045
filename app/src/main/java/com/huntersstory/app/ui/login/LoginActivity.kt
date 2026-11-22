@@ -15,12 +15,14 @@ import com.huntersstory.app.R
 import com.huntersstory.app.ui.auth.AuthUiState
 import com.huntersstory.app.ui.auth.AuthViewModel
 import com.huntersstory.app.ui.register.RegisterActivity
+import com.huntersstory.app.util.ThemeManager
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: AuthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.restore(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 

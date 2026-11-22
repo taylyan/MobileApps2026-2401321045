@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F4F6F3"
+    android:background="@color/hs_background"
     android:fitsSystemWindows="true">
     <include layout="@layout/layout_back_button" />
 
@@ -15,7 +15,7 @@
         android:text="Hunting Spots"
         android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="#234D32" />
+        android:textColor="@color/hs_primary" />
 
     <TextView
         android:layout_width="match_parent"

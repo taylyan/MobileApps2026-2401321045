@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F4F6F3">
+    android:background="@color/hs_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Hunter's Story"
-            android:textColor="#234D32"
+            android:textColor="@color/hs_primary"
             android:textSize="30sp"
             android:textStyle="bold"
             android:layout_marginTop="20dp"/>
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Your hunting companion"
-            android:textColor="#666666"
+            android:textColor="@color/hs_text_secondary"
             android:textSize="16sp"
             android:layout_marginBottom="30dp"/>
 
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Dashboard"
-            android:textColor="#222222"
+            android:textColor="@color/hs_text_primary"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
@@ -81,12 +81,20 @@
             android:layout_marginTop="12dp"
             android:text="Cloud Backup" />
 
+        <Button
+            android:id="@+id/btnThemeToggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Switch to Dark Mode"
+            android:textAllCaps="false" />
+
         <TextView
             android:id="@+id/tvUserEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Signed in as:"
-            android:textColor="#666666"
+            android:textColor="@color/hs_text_secondary"
             android:textSize="14sp"
             android:gravity="center"
             android:layout_marginTop="24dp" />

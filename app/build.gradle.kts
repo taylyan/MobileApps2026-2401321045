@@ -1,13 +1,19 @@
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
+
 }
 
 android {
     namespace = "com.huntersstory.app"
     compileSdk {
         version = release(37)
+    }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
     }
 
     defaultConfig {
@@ -21,6 +27,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
         release {
             optimization {
                 enable = true
@@ -58,4 +68,12 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("org.maplibre.gl:android-sdk:13.6.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    androidTestImplementation("androidx.test:core:1.7.0")
+    testImplementation("org.json:json:20240303")
+    testImplementation("io.mockk:mockk:1.14.11")
+    testImplementation("org.robolectric:robolectric:4.18.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("androidx.test:core:1.7.0")
 }
+
+

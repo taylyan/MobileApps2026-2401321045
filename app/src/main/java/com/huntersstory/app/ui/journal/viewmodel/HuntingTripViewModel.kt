@@ -10,19 +10,14 @@ import com.huntersstory.app.data.repository.HuntingTripRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class HuntingTripViewModel(
-    application: Application
+class HuntingTripViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repository: HuntingTripRepository =
+        HuntingTripRepository(
+            HunterDatabase.getDatabase(application)
+                .huntingTripDao()
+        )
 ) : AndroidViewModel(application) {
-
-    private val repository: HuntingTripRepository
-
-    init {
-        val dao = HunterDatabase
-            .getDatabase(application)
-            .huntingTripDao()
-
-        repository = HuntingTripRepository(dao)
-    }
 
     fun getTripsByUser(userId: String): Flow<List<HuntingTrip>> {
         return repository.getTripsByUser(userId)

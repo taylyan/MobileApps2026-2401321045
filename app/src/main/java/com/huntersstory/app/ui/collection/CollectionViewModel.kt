@@ -11,13 +11,13 @@ import com.huntersstory.app.data.repository.CollectionType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class CollectionViewModel(
-    application: Application
+class CollectionViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repository: CollectionRepository =
+        CollectionRepository(
+            HunterDatabase.getDatabase(application)
+        )
 ) : AndroidViewModel(application) {
-
-    private val repository = CollectionRepository(
-        HunterDatabase.getDatabase(application)
-    )
 
     fun observe(
         type: CollectionType,

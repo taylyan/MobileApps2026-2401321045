@@ -14,6 +14,7 @@ import com.huntersstory.app.data.local.HunterDatabase
 import com.huntersstory.app.data.local.entity.HuntingTrip
 import com.huntersstory.app.ui.journal.viewmodel.HuntingTripViewModel
 import kotlinx.coroutines.launch
+import com.huntersstory.app.domain.validation.HuntingTripValidator
 
 class AddHuntActivity : AppCompatActivity() {
 
@@ -81,17 +82,23 @@ class AddHuntActivity : AppCompatActivity() {
             val species = speciesField.text.toString().trim()
             val notes = notesField.text.toString().trim()
 
-            if (date.isBlank() ||
-                location.isBlank() ||
-                species.isBlank()
-            ) {
+
+            val validationError = HuntingTripValidator.validate(
+                date = date,
+                location = location,
+                species = species
+            )
+
+            if (validationError != null) {
                 Toast.makeText(
                     this,
-                    "Please fill in all required fields.",
+                    validationError,
                     Toast.LENGTH_SHORT
                 ).show()
+
                 return@setOnClickListener
             }
+
 
             val trip = HuntingTrip(
                 id = existingTrip?.id ?: 0L,

@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CloudSyncViewModel(
-    application: Application
+class CloudSyncViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repository: CloudBackupRepository =
+        CloudBackupRepository(application)
 ) : AndroidViewModel(application) {
-
-    private val repository = CloudBackupRepository(application)
 
     private val _state = MutableStateFlow<SyncState>(
         SyncState.Idle

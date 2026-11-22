@@ -6,17 +6,19 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.huntersstory.app.data.local.entity.HuntingPhoto
 import com.huntersstory.app.data.repository.PhotoRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class GalleryViewModel(
-    application: Application
+class GalleryViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repository: PhotoRepository =
+        PhotoRepository(application),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AndroidViewModel(application) {
-
-    private val repository = PhotoRepository(application)
 
     fun observe(uid: String): Flow<List<HuntingPhoto>> {
         return repository.observe(uid)
@@ -34,7 +36,7 @@ class GalleryViewModel(
     ) {
         viewModelScope.launch {
             try {
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     repository.save(uid, fileName)
                 }
                 onSuccess()
@@ -52,7 +54,7 @@ class GalleryViewModel(
     ) {
         viewModelScope.launch {
             try {
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     repository.delete(photo, uid)
                 }
                 onSuccess()

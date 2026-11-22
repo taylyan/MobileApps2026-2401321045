@@ -6,14 +6,16 @@ import com.huntersstory.app.data.local.HunterDatabase
 import com.huntersstory.app.data.local.entity.HuntingPhoto
 import kotlinx.coroutines.flow.Flow
 import java.io.File
-
-class PhotoRepository(context: Context) {
+import com.huntersstory.app.data.local.dao.HuntingPhotoDao
+class PhotoRepository(
+    context: Context,
+    private val dao: HuntingPhotoDao =
+        HunterDatabase.getDatabase(
+            context.applicationContext
+        ).huntingPhotoDao()
+) {
 
     private val appContext = context.applicationContext
-
-    private val dao = HunterDatabase
-        .getDatabase(appContext)
-        .huntingPhotoDao()
 
     val photoDirectory: File
         get() = File(appContext.filesDir, "photos")

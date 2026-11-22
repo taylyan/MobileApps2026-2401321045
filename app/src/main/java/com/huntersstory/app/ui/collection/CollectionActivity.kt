@@ -22,6 +22,7 @@ import com.huntersstory.app.R
 import com.huntersstory.app.data.repository.CollectionItem
 import com.huntersstory.app.data.repository.CollectionType
 import kotlinx.coroutines.launch
+import com.huntersstory.app.domain.validation.HuntingDogValidator
 
 class CollectionActivity : AppCompatActivity() {
 
@@ -198,15 +199,13 @@ class CollectionActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+
                 val age: Int? = if (isDog) {
                     val enteredAge = ageField.text
                         .toString().toIntOrNull()
 
-                    if (enteredAge == null ||
-                        enteredAge !in 0..30
-                    ) {
-                        ageField.error =
-                            "Enter an age from 0 to 30"
+                    if (enteredAge == null || enteredAge !in 0..30) {
+                        ageField.error = "Enter an age from 0 to 30"
                         return@setOnClickListener
                     }
 
@@ -214,6 +213,20 @@ class CollectionActivity : AppCompatActivity() {
                 } else {
                     null
                 }
+
+                if (isDog) {
+                    val validationError = HuntingDogValidator.validate(
+                        name = name,
+                        breed = secondary,
+                        age = age
+                    )
+
+                    if (validationError != null) {
+                        message(validationError)
+                        return@setOnClickListener
+                    }
+                }
+
 
                 val item = CollectionItem(
                     id = existing?.id ?: 0L,

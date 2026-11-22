@@ -7,23 +7,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.huntersstory.app.data.local.dao.EquipmentDao
-import com.huntersstory.app.data.local.dao.HuntingDogDao
-import com.huntersstory.app.data.local.dao.HuntingSpotDao
-import com.huntersstory.app.data.local.dao.HuntingTripDao
-import com.huntersstory.app.data.local.entity.Equipment
-import com.huntersstory.app.data.local.entity.HuntingDog
-import com.huntersstory.app.data.local.entity.HuntingSpot
-import com.huntersstory.app.data.local.entity.HuntingTrip
+import com.huntersstory.app.data.local.dao.*
+import com.huntersstory.app.data.local.entity.*
 
 @Database(
     entities = [
         HuntingTrip::class,
         HuntingSpot::class,
         Equipment::class,
-        HuntingDog::class
+        HuntingDog::class,
+        HuntingPhoto::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class HunterDatabase : RoomDatabase() {
@@ -32,8 +27,10 @@ abstract class HunterDatabase : RoomDatabase() {
     abstract fun huntingSpotDao(): HuntingSpotDao
     abstract fun equipmentDao(): EquipmentDao
     abstract fun huntingDogDao(): HuntingDogDao
+    abstract fun huntingPhotoDao(): HuntingPhotoDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: HunterDatabase? = null
 
@@ -54,7 +51,6 @@ abstract class HunterDatabase : RoomDatabase() {
 
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
-
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS equipment (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -78,6 +74,19 @@ abstract class HunterDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS hunting_photos (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        userId TEXT NOT NULL,
+                        fileName TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): HunterDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
@@ -85,7 +94,11 @@ abstract class HunterDatabase : RoomDatabase() {
                     HunterDatabase::class.java,
                     "hunter_database"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(
+                        MIGRATION_1_2,
+                        MIGRATION_2_3,
+                        MIGRATION_3_4
+                    )
                     .build()
                     .also { INSTANCE = it }
             }

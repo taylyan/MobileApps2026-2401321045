@@ -13,7 +13,7 @@ import com.huntersstory.app.ui.login.LoginActivity
 import com.huntersstory.app.ui.journal.JournalActivity
 import com.huntersstory.app.ui.spots.SpotsActivity
 import com.huntersstory.app.ui.collection.CollectionActivity
-
+import com.huntersstory.app.ui.gallery.GalleryActivity
 class MainActivity : AppCompatActivity() {
 
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -93,6 +93,14 @@ class MainActivity : AppCompatActivity() {
 
             intent.putExtra("collection_type", "dogs")
             startActivity(intent)
+        }
+
+        val galleryButton = findViewById<Button>(R.id.btnGallery)
+
+        galleryButton.setOnClickListener {
+            startActivity(
+                Intent(this, GalleryActivity::class.java)
+            )
         }
 
     }
